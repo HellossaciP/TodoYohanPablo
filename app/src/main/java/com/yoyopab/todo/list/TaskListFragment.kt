@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.yoyopab.todo.R
+import com.yoyopab.todo.databinding.FragmentTaskListBinding
+import java.util.UUID
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -19,9 +21,13 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class TaskListFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var taskList = listOf("Task 1", "Task 2", "Task 3")
+    private var taskList = listOf(
+        Task(id = "id_1", title = "Task 1", description = "description 1"),
+        Task(id = "id_2", title = "Task 2"),
+        Task(id = "id_3", title = "Task 3")
+    )
     private val adapter = TaskListAdapter()
+    private lateinit var binding: FragmentTaskListBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,14 +39,20 @@ class TaskListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_task_list, container, false)
-        adapter.currentList = taskList
+        super.onCreate(savedInstanceState)
+        binding = FragmentTaskListBinding.inflate(layoutInflater)
+        val rootView = binding.root
+        adapter.submitList(taskList)
         return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recycler)
-        recyclerView.adapter = adapter
+        binding.recycler.adapter = adapter
+        binding.floatingActionButton.setOnClickListener() {
+            val newTask = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
+            taskList = taskList + newTask
+            adapter.submitList(taskList)
+        }
     }
 
     companion object {
