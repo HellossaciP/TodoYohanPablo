@@ -42,6 +42,9 @@ class TaskListFragment : Fragment() {
         super.onCreate(savedInstanceState)
         binding = FragmentTaskListBinding.inflate(layoutInflater)
         val rootView = binding.root
+        adapter.onClickDelete = { task ->
+            print("oulala je supprime la tâche"+task.title)
+        }
         adapter.submitList(taskList)
         return rootView
     }
