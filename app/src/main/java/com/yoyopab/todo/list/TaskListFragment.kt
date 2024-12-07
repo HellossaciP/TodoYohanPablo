@@ -1,5 +1,6 @@
 package com.yoyopab.todo.list
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.yoyopab.todo.R
 import com.yoyopab.todo.databinding.FragmentTaskListBinding
+import com.yoyopab.todo.detail.DetailActivity
 import java.util.UUID
 
 // TODO: Rename parameter arguments, choose names that match
@@ -30,6 +32,7 @@ class TaskListFragment : Fragment() {
     // Not used yet
     // private val diffCallbacks = MyItemsDiffCallback
     private lateinit var binding: FragmentTaskListBinding
+    val intent = Intent(context, DetailActivity::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,10 +60,11 @@ class TaskListFragment : Fragment() {
             adapter.submitList(taskList.toList())
         }
         binding.floatingActionButton.setOnClickListener() {
-            val newTask = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
+            /*val newTask = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
             taskList = taskList + newTask
             println(taskList)
-            adapter.submitList(taskList.toList())
+            adapter.submitList(taskList.toList())*/
+            startActivity(intent)
         }
 
         adapter.submitList(taskList)

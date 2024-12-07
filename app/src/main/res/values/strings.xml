@@ -4,4 +4,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_new_task">Add new task</string>
     <string name="remove_task">Remove Task</string>
+    <string name="title_activity_detail">DetailActivity</string>
 </resources>
