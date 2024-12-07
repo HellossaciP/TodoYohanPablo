@@ -27,7 +27,8 @@ class TaskListFragment : Fragment() {
         Task(id = "id_3", title = "Task 3")
     )
     private val adapter = TaskListAdapter()
-    private val diffCallbacks = MyItemsDiffCallback
+    // Not used yet
+    // private val diffCallbacks = MyItemsDiffCallback
     private lateinit var binding: FragmentTaskListBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,25 +44,26 @@ class TaskListFragment : Fragment() {
         super.onCreate(savedInstanceState)
         binding = FragmentTaskListBinding.inflate(layoutInflater)
         val rootView = binding.root
-        adapter.onClickDelete = {task ->
-            // TODO : Euh ca marche pas je FF go next
-            taskList = taskList.filter { !diffCallbacks.areItemsTheSame(it, task) }
-            println(taskList)
-            adapter.submitList(taskList.toList())
-        }
         adapter.submitList(taskList)
         return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.recycler.adapter = adapter
+        adapter.onClickDelete = {task ->
+            // TODO : Euh ca marche pas je FF go next
+            taskList = taskList.filter { it.id != task.id }
+            println(taskList)
+            adapter.submitList(taskList.toList())
+        }
         binding.floatingActionButton.setOnClickListener() {
             val newTask = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
             taskList = taskList + newTask
             println(taskList)
             adapter.submitList(taskList.toList())
-            adapter.notifyItemInserted(taskList.size + 1)
         }
+
+        adapter.submitList(taskList)
     }
 
     companion object {
