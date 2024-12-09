@@ -59,11 +59,11 @@ class TaskListFragment : Fragment() {
             adapter.submitList(taskList)
         }
         binding.floatingActionButton.setOnClickListener() {
-            val newTask = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
+            /*val newTask = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
             taskList = taskList + newTask
             println(taskList)
-            adapter.submitList(taskList.toList())
-            //startActivity(Intent(context, DetailActivity::class.java))
+            adapter.submitList(taskList.toList())*/
+            startActivity(Intent(context, DetailActivity::class.java))
         }
 
         adapter.submitList(taskList)
