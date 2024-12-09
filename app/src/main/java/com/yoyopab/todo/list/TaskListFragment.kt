@@ -32,7 +32,6 @@ class TaskListFragment : Fragment() {
     // Not used yet
     // private val diffCallbacks = MyItemsDiffCallback
     private lateinit var binding: FragmentTaskListBinding
-    val intent = Intent(context, DetailActivity::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,16 +54,16 @@ class TaskListFragment : Fragment() {
         binding.recycler.adapter = adapter
         adapter.onClickDelete = {task ->
             // TODO : Euh ca marche pas je FF go next
-            taskList = taskList.filter { it.id != task.id }
+            taskList = taskList - task
             println(taskList)
-            adapter.submitList(taskList.toList())
+            adapter.submitList(taskList)
         }
         binding.floatingActionButton.setOnClickListener() {
-            /*val newTask = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
+            val newTask = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
             taskList = taskList + newTask
             println(taskList)
-            adapter.submitList(taskList.toList())*/
-            startActivity(intent)
+            adapter.submitList(taskList.toList())
+            //startActivity(Intent(context, DetailActivity::class.java))
         }
 
         adapter.submitList(taskList)

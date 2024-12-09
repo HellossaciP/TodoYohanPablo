@@ -19,17 +19,17 @@ object MyItemsDiffCallback : DiffUtil.ItemCallback<Task>() {
     }
 
     override fun areContentsTheSame(oldItem: Task, newItem: Task) : Boolean {
-        return ((oldItem.title == newItem.title) && (oldItem.description == newItem.description))
+        return oldItem == newItem
     }
 }
 
 class TaskListAdapter : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(MyItemsDiffCallback) {
 
-    private lateinit var binding: ItemTaskBinding
+
     var onClickDelete: (Task) -> Unit = {}
 
     // on utilise `inner` ici afin d'avoir accès aux propriétés de l'adapter directement
-    inner class TaskViewHolder(binding: ItemTaskBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class TaskViewHolder(private val binding: ItemTaskBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(task: Task) {
             binding.taskTitle.text = task.title
             binding.taskDescription.text = task.description
@@ -40,7 +40,7 @@ class TaskListAdapter : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(MyItem
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
-        binding = ItemTaskBinding.inflate(LayoutInflater.from(parent.context))
+       val binding = ItemTaskBinding.inflate(LayoutInflater.from(parent.context))
         return TaskViewHolder(binding)
     }
 
