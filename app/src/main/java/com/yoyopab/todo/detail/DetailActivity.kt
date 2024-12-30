@@ -52,6 +52,8 @@ class DetailActivity : ComponentActivity() {
 @Composable
 fun Detail(modifier: Modifier = Modifier, onValidate: (Task) -> Unit) {
     var task by remember { mutableStateOf(Task(id = UUID.randomUUID().toString(), title = "New Task !")) }
+    var textTitle by remember { mutableStateOf("") }
+    var textDescr by remember { mutableStateOf("") }
     Column (
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -62,18 +64,18 @@ fun Detail(modifier: Modifier = Modifier, onValidate: (Task) -> Unit) {
             style = MaterialTheme.typography.headlineLarge
         )
         OutlinedTextField(
-            value = "",
+            value = textTitle,
             label = {Text("Title")},
-            onValueChange = {}
+            onValueChange = { textTitle = it }
         )
         OutlinedTextField(
-            value = "",
+            value = textDescr,
             label = {Text("Description")},
-            onValueChange = {}
+            onValueChange = { textDescr = it }
         )
         Button(
             onClick = {
-                val newTask = Task(id = UUID.randomUUID().toString(), title = "New Task !")
+                val newTask = Task(id = UUID.randomUUID().toString(), title = textTitle, description = textDescr)
                 onValidate(newTask)
             }
         ){
