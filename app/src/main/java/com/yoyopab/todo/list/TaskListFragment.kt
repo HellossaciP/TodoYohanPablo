@@ -1,5 +1,6 @@
 package com.yoyopab.todo.list
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -34,11 +35,19 @@ class TaskListFragment : Fragment() {
     // private val diffCallbacks = MyItemsDiffCallback
     private lateinit var binding: FragmentTaskListBinding
     val createTask = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        //TODO : Plus tard
         val task = result.data?.getSerializableExtra("task") as Task?
         if (task != null){
             taskList = taskList + task
             adapter.submitList(taskList)
+        }
+    }
+    val editTaskLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val editedTask = result.data?.getSerializableExtra("task") as? Task
+            if (editedTask != null) {
+                taskList = taskList.map { if (it.id == editedTask.id) editedTask else it }
+                adapter.submitList(taskList)
+            }
         }
     }
 
@@ -65,9 +74,15 @@ class TaskListFragment : Fragment() {
             taskList = taskList - task
             adapter.submitList(taskList)
         }
+        adapter.onClickEdit = {task ->
+            val intent = Intent(requireContext(), DetailActivity::class.java)
+            intent.putExtra("task", task)
+            editTaskLauncher.launch(intent)
+        }
         binding.floatingActionButton.setOnClickListener() {
             createTask.launch(Intent(context, DetailActivity::class.java))
         }
+
 
         adapter.submitList(taskList)
     }

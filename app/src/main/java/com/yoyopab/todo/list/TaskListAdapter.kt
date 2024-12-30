@@ -27,6 +27,7 @@ class TaskListAdapter : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(MyItem
 
 
     var onClickDelete: (Task) -> Unit = {}
+    var onClickEdit: (Task) -> Unit = {}
 
     // on utilise `inner` ici afin d'avoir accès aux propriétés de l'adapter directement
     inner class TaskViewHolder(private val binding: ItemTaskBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -35,6 +36,9 @@ class TaskListAdapter : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(MyItem
             binding.taskDescription.text = task.description
             binding.floatingActionButton4.setOnClickListener() {
                 onClickDelete(task)
+            }
+            binding.floatingActionButton2.setOnClickListener() {
+                onClickEdit(task)
             }
         }
     }

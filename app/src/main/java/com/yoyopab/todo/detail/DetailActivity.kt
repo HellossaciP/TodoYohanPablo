@@ -1,8 +1,8 @@
 package com.yoyopab.todo.detail
 
-import android.app.Activity.RESULT_OK
+import android.R.attr.description
+import android.R.id
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -20,13 +20,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yoyopab.todo.detail.ui.theme.TodoYohanPabloTheme
 import com.yoyopab.todo.list.Task
 import java.util.UUID
+
 
 class DetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +35,12 @@ class DetailActivity : ComponentActivity() {
         setContent {
             TodoYohanPabloTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    val initialTask = intent.getSerializableExtra("task") as? Task
                     Detail(
+                        initialTask = initialTask,
                         modifier = Modifier.padding(innerPadding),
-                        onValidate = { newTask ->
-                            intent.putExtra("task", newTask)
+                        onValidate = { updatedTask ->
+                            intent.putExtra("task", updatedTask)
                             setResult(RESULT_OK, intent)
                             finish()
                         }
@@ -50,10 +52,10 @@ class DetailActivity : ComponentActivity() {
 }
 
 @Composable
-fun Detail(modifier: Modifier = Modifier, onValidate: (Task) -> Unit) {
-    var task by remember { mutableStateOf(Task(id = UUID.randomUUID().toString(), title = "New Task !")) }
-    var textTitle by remember { mutableStateOf("") }
-    var textDescr by remember { mutableStateOf("") }
+fun Detail(initialTask: Task? = null, modifier: Modifier = Modifier, onValidate: (Task) -> Unit) {
+    var task by remember { mutableStateOf(initialTask ?: Task(id = UUID.randomUUID().toString(), title = "New Task !")) }
+    var textTitle by remember { mutableStateOf(task.title) }
+    var textDescr by remember { mutableStateOf(task.description) }
     Column (
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -75,8 +77,8 @@ fun Detail(modifier: Modifier = Modifier, onValidate: (Task) -> Unit) {
         )
         Button(
             onClick = {
-                val newTask = Task(id = UUID.randomUUID().toString(), title = textTitle, description = textDescr)
-                onValidate(newTask)
+                val updatedTask = task.copy(title = textTitle, description = textDescr)
+                onValidate(updatedTask)
             }
         ){
             Text(
@@ -91,6 +93,7 @@ fun Detail(modifier: Modifier = Modifier, onValidate: (Task) -> Unit) {
 fun DetailPreview() {
     TodoYohanPabloTheme {
         Detail(
+            initialTask = Task(id = "123", title = "Preview Task", description = "Preview Description"),
             onValidate = {}
         )
     }
