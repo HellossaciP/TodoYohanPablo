@@ -5,4 +5,6 @@
     <string name="add_new_task">Add new task</string>
     <string name="remove_task">Remove Task</string>
     <string name="title_activity_detail">DetailActivity</string>
+    <string name="username">UserName</string>
+    <string name="todo_list">Todo List</string>
 </resources>

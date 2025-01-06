@@ -8,10 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.yoyopab.todo.R
+import com.yoyopab.todo.data.Api
+import com.yoyopab.todo.data.TaskListViewModel
 import com.yoyopab.todo.databinding.FragmentTaskListBinding
 import com.yoyopab.todo.detail.DetailActivity
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 // TODO: Rename parameter arguments, choose names that match
@@ -25,11 +30,8 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class TaskListFragment : Fragment() {
-    private var taskList = listOf(
-        Task(id = "id_1", title = "Task 1", description = "description 1"),
-        Task(id = "id_2", title = "Task 2"),
-        Task(id = "id_3", title = "Task 3")
-    )
+
+    private val viewModel: TaskListViewModel by viewModels()
     private val adapter = TaskListAdapter()
     // Not used yet
     // private val diffCallbacks = MyItemsDiffCallback
@@ -37,16 +39,14 @@ class TaskListFragment : Fragment() {
     val createTask = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = result.data?.getSerializableExtra("task") as Task?
         if (task != null){
-            taskList = taskList + task
-            adapter.submitList(taskList)
+            viewModel.add(task)
         }
     }
     val editTaskLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val editedTask = result.data?.getSerializableExtra("task") as? Task
             if (editedTask != null) {
-                taskList = taskList.map { if (it.id == editedTask.id) editedTask else it }
-                adapter.submitList(taskList)
+                viewModel.update(editedTask)
             }
         }
     }
@@ -64,15 +64,13 @@ class TaskListFragment : Fragment() {
         super.onCreate(savedInstanceState)
         binding = FragmentTaskListBinding.inflate(layoutInflater)
         val rootView = binding.root
-        adapter.submitList(taskList)
         return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.recycler.adapter = adapter
         adapter.onClickDelete = {task ->
-            taskList = taskList - task
-            adapter.submitList(taskList)
+            viewModel.delete(task)
         }
         adapter.onClickEdit = {task ->
             val intent = Intent(requireContext(), DetailActivity::class.java)
@@ -83,8 +81,21 @@ class TaskListFragment : Fragment() {
             createTask.launch(Intent(context, DetailActivity::class.java))
         }
 
+        lifecycleScope.launch { // on lance une coroutine car `collect` est `suspend`
+            viewModel.tasksStateFlow.collect { newList ->
+                adapter.submitList(newList)
+            }
+        }
+    }
 
-        adapter.submitList(taskList)
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            // Ici on ne va pas gérer les cas d'erreur donc on force le crash avec "!!"
+            val user = Api.userWebService.fetchUser().body()!!
+            binding.userTextView.text = user.name
+        }
+        viewModel.refresh()
     }
 
     companion object {
