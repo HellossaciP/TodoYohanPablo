@@ -11,11 +11,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
+import coil3.request.error
 import com.yoyopab.todo.R
 import com.yoyopab.todo.data.Api
 import com.yoyopab.todo.data.TaskListViewModel
 import com.yoyopab.todo.databinding.FragmentTaskListBinding
 import com.yoyopab.todo.detail.DetailActivity
+import com.yoyopab.todo.user.UserActivity
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -80,6 +83,10 @@ class TaskListFragment : Fragment() {
         binding.floatingActionButton.setOnClickListener() {
             createTask.launch(Intent(context, DetailActivity::class.java))
         }
+        binding.imageView.setOnClickListener {
+            val intent = Intent(requireContext(), UserActivity::class.java)
+            startActivity(intent)
+        }
 
         lifecycleScope.launch { // on lance une coroutine car `collect` est `suspend`
             viewModel.tasksStateFlow.collect { newList ->
@@ -94,6 +101,9 @@ class TaskListFragment : Fragment() {
             // Ici on ne va pas gérer les cas d'erreur donc on force le crash avec "!!"
             val user = Api.userWebService.fetchUser().body()!!
             binding.userTextView.text = user.name
+            binding.imageView.load(user.avatar) {
+                error(R.drawable.ic_launcher_background) // image par défaut en cas d'erreur
+            }
         }
         viewModel.refresh()
     }

@@ -11,35 +11,27 @@
         android:id="@+id/userTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:text="@string/username"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        tools:ignore="MissingConstraints" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/todo_list"
-        app:layout_constraintBottom_toTopOf="@+id/recycler"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/userTextView"
-        app:layout_constraintVertical_bias="1.0"
         tools:ignore="MissingConstraints" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="100dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
         tools:ignore="MissingConstraints" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -55,5 +47,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:baselineAlignBottom="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
