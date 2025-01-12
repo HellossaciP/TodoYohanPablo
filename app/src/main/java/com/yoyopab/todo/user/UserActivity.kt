@@ -4,8 +4,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.Manifest
+import android.content.ContentValues
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -41,13 +43,17 @@ class UserActivity : ComponentActivity() {
 
             val coroutineScope = rememberCoroutineScope()
 
-            val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { capturedBitmap ->
-                if (capturedBitmap != null) {
-                    bitmap = capturedBitmap
+            val captureUri by lazy {
+                contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ContentValues())
+            }
+
+            val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { succes ->
+                if (succes) {
+                    uri = captureUri
                     coroutineScope.launch {
                         try {
-                            val avatarPart = capturedBitmap.toRequestBody()
-                            val response = Api.userWebService.updateAvatar(avatarPart)
+                            val avatarPart = captureUri?.toRequestBody(this@UserActivity)
+                            val response = Api.userWebService.updateAvatar(avatarPart!!)
                             if (response.isSuccessful) {
                                 // Succès
                             } else {
@@ -92,7 +98,7 @@ class UserActivity : ComponentActivity() {
                     contentDescription = null
                 )
                 Button(
-                    onClick = { takePicture.launch() },
+                    onClick = { takePicture.launch(captureUri!!) },
                     content = { Text("Take picture") }
                 )
                 Button(
